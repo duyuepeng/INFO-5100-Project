@@ -8,6 +8,7 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,6 +21,7 @@ import m3.model.filter.BrandFilter;
 import m3.model.filter.ColorFilter;
 import m3.model.checker.Checker;
 import m3.model.filter.Filter;
+import m3.model.filter.InputException;
 import m3.model.filter.VehicleIDsFilter;
 import m3.model.filter.YearFilter;
 
@@ -32,6 +34,7 @@ public class FilterEditUI extends BasicUI{
 	private JTextField value;
 	private JButton cancle, ok;	
 	private SecondUI sui;
+	private JDialog jd;
 	
 	FilterEditUI(SecondUI sui){
 		this.sui = sui;
@@ -147,13 +150,17 @@ public class FilterEditUI extends BasicUI{
 										this.dispose();
 										
 		System.out.println(addFilter(Name.getSelectedItem().toString(),Type.getSelectedItem().toString(), value.getText()).checkerToString());
-		});
+		}
+		
+		);
 	}
 	
 	
 	
 	private Filter addFilter(String name, String type, String value) {
-		return FilterFinder(name, type, value);
+		
+			return FilterFinder(name, type, value);
+		
 	}
 	
 	public Filter toSecondUIFilter()
@@ -174,22 +181,40 @@ public class FilterEditUI extends BasicUI{
 			
 		}
 		case("VehicleIDs"):{
-			//return new VehicleIDsFilter(value, new EqualChecker());
+			VehicleIDsFilter v = new VehicleIDsFilter(new EqualChecker());
+			
+			return new VehicleIDsFilter(new EqualChecker());
 		}
 		case("Year"):{
 			if(type.equals("<"))
-				return new YearFilter(value,(Checker) new GreaterChecker()); 
-				
+			{ YearFilter y = new YearFilter((Checker) new GreaterChecker()); 
+				try {
+					y.setValueFromString(value);
+				} catch (InputException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return y;
+			}
 			else
-				
-				return new YearFilter(value, (Checker)new LessChecker());
+			{	YearFilter y = new YearFilter((Checker)new LessChecker());
+				try {
+					y.setValueFromString(value);
+				} catch (InputException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return y;}
 		}
 		}
 		return null;
 	}
 	
-	public void modifyFilter(Filter f) {
-		
+	public void modifyFilter(String[] filter) {
+		FilterFinder(filter[0], filter[1], filter[2]);
+		Name.setSelectedItem(filter[0]);
+		Type.setSelectedItem(filter[1]);
+		value.setText(filter[2]);
 	}
 	
 	

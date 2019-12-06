@@ -20,6 +20,7 @@ import com.toedter.calendar.JDateChooser;
 import m3.model.Incentive;
 import m3.model.filter.BrandFilter;
 import m3.model.filter.ColorFilter;
+import m3.model.filter.YearFilter;
 import m3.model.offer.CashBackOffer;
 import m3.model.offer.DiscountOffer;
 
@@ -35,6 +36,7 @@ public class SecondUI {
 	Incentive iw = new Incentive();
 	FirstUI fui;
 	FilterEditUI filterUI;
+	private String[] row;
 	
 	SecondUI(FirstUI fui){
 		this.fui = fui;
@@ -125,20 +127,29 @@ public class SecondUI {
 		create.addActionListener(e -> {
 		openFilterEditUI();
 		filterUI.addWindowStateListener(l -> {addToTableBelow(filterUI.toSecondUIFilter());});
-        
-		//addToTableBelow(filterUI.toSecondUIFilter())
+       // filterUI.dispose();
+		
 		}
 				);
 		
 		  // Third UI start function here
         
 		
-    	// edit.addActionListener(e -> );   // Third UI start function here
+    	edit.addActionListener(e -> {
+    		row = getRow();
+    		openFilterEditUI();  		
+    		filterUI.modifyFilter(row);
+    		filterUI.addWindowStateListener(l -> {
+    			addToTableBelow(filterUI.toSecondUIFilter());
+    			deleteSelectedRow();
+    		});
+    	});   // Third UI start function here
+    	
         
         
     	delete.addActionListener(e -> deleteSelectedRow());
     	
-    	
+    	cancel.addActionListener(e -> frame.dispose());
     	cancel.addActionListener(e -> System.exit(0));
     	
     	offerChoice.addActionListener(e -> {
@@ -200,7 +211,9 @@ public class SecondUI {
     		}
     		iw.setDisclaimer(disclaimerText.getText());
     		fui.addToTable(iw);
-    		//frame.setVisible(false);
+    		frame.dispose();
+    		
+    		
     	});		
 	}
 	
@@ -228,6 +241,19 @@ public class SecondUI {
 		}
     }
     
+    public String[] getRow() {
+    	dm = (DefaultTableModel) table.getModel();
+		try{
+			int rowIndex = table.getSelectedRow();
+			dm.removeRow(rowIndex);
+			row = new String[] {(String) dm.getValueAt(rowIndex, 0),(String)dm.getValueAt(rowIndex, 1),(String)dm.getValueAt(rowIndex, 2)};
+			
+		}catch(Exception e){
+			JOptionPane.showMessageDialog(null, "Please select a Row or No rows to delete");
+		}
+		return row;
+    }
+    
     public void addToTableBelow(m3.model.filter.Filter filter) {
 		dm.addRow(filterToString(filter));
 
@@ -241,6 +267,9 @@ public class SecondUI {
 			}
 		case("ColorFilter"):{
 			return new String[] {"Color", ((ColorFilter)filter).checkerToString(),((ColorFilter)filter).getValue()};
+		}
+		case("YearFilter"):{
+			return new String[] {"Year",((YearFilter)filter).checkerToString(), ((YearFilter)filter).getValue().toString()};
 		}
 
 		default:
