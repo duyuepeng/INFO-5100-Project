@@ -19,6 +19,13 @@ public class VehicleIDsFilter extends ListFilter<Integer> {
         return vehicle.getId();
     }
 
+    public String toString() {
+    
+    	String s = super.getList().toString().substring(1, super.getList().toString().length() - 1);
+    	System.out.println(super.getList().toString());
+    	return s;
+    }
+    
 	@Override
 	public Integer getValueFromString(String string) throws InputException {
 		char[] ch = string.toCharArray();

@@ -5,6 +5,7 @@ import m3.model.checker.Checker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class ListFilter<T> extends Filter<T> {
     private List<T> list;
@@ -21,6 +22,8 @@ public abstract class ListFilter<T> extends Filter<T> {
     public List<T> getList() {
         return list;
     }
+    
+   
 
     public void setList(List<T> list) {
         this.list = list;
@@ -35,6 +38,17 @@ public abstract class ListFilter<T> extends Filter<T> {
             list.add(this.getValueFromString(strings[i]));
         }
         this.setList(list);
+    }
+    
+    
+    public String getStringfromList() {
+    	String s = "";
+    	for(T str : list) {
+    		s = s.concat(str.toString());
+    		s = s.concat(",");
+    	}
+    	return s.substring(0,s.length()- 1);
+    	
     }
 
     @Override
