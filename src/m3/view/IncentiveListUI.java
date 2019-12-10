@@ -3,11 +3,12 @@ package m3.view;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import dataproto.Dealer;
 import m3.model.Incentive;
 import m3.model.IncentiveList;
 
 
-public class FirstUI {
+public class IncentiveListUI {
 	
 	JFrame frame;
 	JTable table = new JTable(){
@@ -16,7 +17,14 @@ public class FirstUI {
 		}
 	};
 	JButton create,delete,edit;
-	SecondUI sui ;
+	IncentiveDetailUI sui ;
+	private Dealer d;
+	
+	public IncentiveListUI(Dealer d){
+		this.d = d;
+		start();
+	}
+	
 	
     public void start(){
         frame = new JFrame();
@@ -33,7 +41,7 @@ public class FirstUI {
     private void addListeners() {
     	create.addActionListener(e -> {
     		frame.setEnabled(false);
-    		sui= new SecondUI(this, -1);
+    		sui= new IncentiveDetailUI(this, -1, d);
         	sui.start();
         });
     	  // need to store to an incentive object
@@ -81,7 +89,7 @@ public class FirstUI {
 				throw new Exception();
 			}
 			frame.setEnabled(false);
-    		sui= new SecondUI(this,rowIndex);
+    		sui= new IncentiveDetailUI(this,rowIndex, d);
         	sui.start();
 		}catch(Exception e){
 			JOptionPane.showMessageDialog(null, "Please select a Row or No rows to Edit");
@@ -93,6 +101,7 @@ public class FirstUI {
 		try{
 			int rowIndex = table.getSelectedRow();
 			tableModel.removeRow(rowIndex);
+			IncentiveList.deleteIncentive(rowIndex);
 		}catch(Exception e){
 			JOptionPane.showMessageDialog(null, "Please select a Row or No rows to delete");
 		}

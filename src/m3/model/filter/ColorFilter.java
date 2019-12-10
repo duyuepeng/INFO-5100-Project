@@ -7,6 +7,10 @@ public class ColorFilter extends ValueFilter<String> {
 	public ColorFilter(String value, Checker<String> checker) {
 		super(value, checker);
 	}
+	
+	public ColorFilter(Checker<String> checker) {
+		super(checker);
+	}
 
 	@Override
 	public String getVehicleValue(Vehicle vehicle) {
