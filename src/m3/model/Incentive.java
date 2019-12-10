@@ -3,11 +3,8 @@ package m3.model;
 import m3.model.filter.Filter;
 import m3.model.offer.Offer;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Incentive {
     private String IncentiveID;
@@ -21,12 +18,8 @@ public class Incentive {
     private Offer offer;
 
     private List<Filter> conditions;
-    private FilterSet<Filter> conditionSet;
 
     public Incentive() {
-    	conditions = new ArrayList<Filter> ();
-    	conditionSet = new FilterSet<Filter>();
-    	
     }
 
     public Incentive(String IncentiveID, Date startDate, Date endDate, String title, String disclaimer, String dealerID, Offer offer, List<Filter> conditions) {
@@ -40,14 +33,6 @@ public class Incentive {
         this.conditions = conditions;
     }
 
-    public void addFilter(Filter f) {
-    	conditions.add(f);
-    	
-    	conditionSet.add(f);
-    	System.out.println(conditionSet.hashCode());
-    }
-    
-    
     public List<Filter> getConditions() {
         return conditions;
     }

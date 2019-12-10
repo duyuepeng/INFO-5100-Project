@@ -158,7 +158,7 @@ public class IncentiveManager implements IncentiveManagement {
             BrandFilter brandFilter = new BrandFilter("A", new EqualChecker());
             List<Filter> filters = new ArrayList<>();
             filters.add(brandFilter);
-            r.add(new Incentive(null, new SimpleDateFormat("dd/MM/yyyy").parse("31/11/2019"),
+            r.add(new Incentive(new SimpleDateFormat("dd/MM/yyyy").parse("31/11/2019"),
                     new SimpleDateFormat("dd/MM/yyyy").parse("31/12/2019"),
                     "I1", "Test", "123", new DiscountOffer(10),
                     filters));

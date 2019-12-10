@@ -11,7 +11,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -23,11 +22,10 @@ import m3.model.filter.ColorFilter;
 import m3.model.checker.Checker;
 import m3.model.filter.Filter;
 import m3.model.filter.InputException;
-import m3.model.filter.ModelFilter;
 import m3.model.filter.VehicleIDsFilter;
 import m3.model.filter.YearFilter;
 
-public class FilterDetailUI extends BasicUI{
+public class FilterEditUI extends BasicUI{
 
 	private JLabel UIName, NameCombo, TypeCombo, valueInput;
 	private JPanel namePanel, UINamePanel, typePanel, valuePanel, buttonPanel;
@@ -35,17 +33,17 @@ public class FilterDetailUI extends BasicUI{
 	private JComboBox Type;
 	private JTextField value;
 	private JButton cancle, ok;	
-	private IncentiveDetailUI sui;
+	private SecondUI sui;
 	private JDialog jd;
 	
-	FilterDetailUI(IncentiveDetailUI sui){
+	FilterEditUI(SecondUI sui){
 		this.sui = sui;
 	}
 	@Override
 	public void create() {
-		
+		// TODO Auto-generated method stub
 		UIName = new JLabel("Condition");
-		Name = new JComboBox(new String[] { "Brand", "Year", "VehicleIDs", "Color","Model" });
+		Name = new JComboBox(new String[] { "Brand", "Year", "VehicleIDs", "Color" });
 		Type = new JComboBox(new String[] {"="});
 		NameCombo = new JLabel("name:");
 		TypeCombo = new JLabel("type:");
@@ -92,7 +90,6 @@ public class FilterDetailUI extends BasicUI{
 		buttonPanel.add(ok);
 		con.add(buttonPanel);
 	}
-	
 	private void TypeToBe(String type) {
 		switch(type) {
 		case("Brand"):{
@@ -119,11 +116,6 @@ public class FilterDetailUI extends BasicUI{
 			break;
 			
 		}
-		case("Model"):{
-			Type.removeAllItems();
-			Type.addItem("=");
-			break;
-		}
 		
 		
 		
@@ -133,7 +125,7 @@ public class FilterDetailUI extends BasicUI{
 
 	@Override
 	public void add(Container con) {
-		
+		// TODO Auto-generated method stub
 		GridLayout gl = new GridLayout(0, 1);
 		con.setLayout(gl);
 		con.setName("condition");
@@ -153,12 +145,11 @@ public class FilterDetailUI extends BasicUI{
 		);
 		
 		cancle.addActionListener((e) -> this.dispose());
-		ok.addActionListener((e) -> {
-			
-											sui.addToTableBelow(toSecondUIFilter());
-											
+		ok.addActionListener((e) -> {addFilter(Name.getSelectedItem().toString(),Type.getSelectedItem().toString(), value.getText());
+										sui.addToTableBelow(toSecondUIFilter());
 										this.dispose();
 										
+		System.out.println(addFilter(Name.getSelectedItem().toString(),Type.getSelectedItem().toString(), value.getText()).checkerToString());
 		}
 		
 		);
@@ -166,11 +157,10 @@ public class FilterDetailUI extends BasicUI{
 	
 	
 	
-	private Filter addFilter(String name, String type, String value)  {
+	private Filter addFilter(String name, String type, String value) {
 		
-			
-				return FilterFinder(name, type, value);
-			
+			return FilterFinder(name, type, value);
+		
 	}
 	
 	public Filter toSecondUIFilter()
@@ -181,23 +171,19 @@ public class FilterDetailUI extends BasicUI{
 	
 	
 	
-	private Filter FilterFinder(String name, String type, String value)  {
-		try{switch(name) {
+	private Filter FilterFinder(String name, String type, String value) {
+		switch(name) {
 		case("Brand"):{
-			BrandFilter b = new BrandFilter((Checker) new EqualChecker());
-			b.setValueFromString(value);
-				return b;
+				return new BrandFilter(value, (Checker) new EqualChecker());
 		}
 		case("Color"):{
-			ColorFilter c = new ColorFilter((Checker) new EqualChecker());
-			c.setValue(value);
-			return c;
+			return new ColorFilter(value, (Checker)new EqualChecker());
 			
 		}
 		case("VehicleIDs"):{
 			VehicleIDsFilter v = new VehicleIDsFilter(new EqualChecker());
-			v.setListFromString(value);
-			return v;
+			
+			return new VehicleIDsFilter(new EqualChecker());
 		}
 		case("Year"):{
 			if(type.equals("<"))
@@ -205,7 +191,7 @@ public class FilterDetailUI extends BasicUI{
 				try {
 					y.setValueFromString(value);
 				} catch (InputException e) {
-					
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				return y;
@@ -215,25 +201,17 @@ public class FilterDetailUI extends BasicUI{
 				try {
 					y.setValueFromString(value);
 				} catch (InputException e) {
-					
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				return y;}
 		}
-		case("Model"):{
-			ModelFilter m = new ModelFilter((Checker) new EqualChecker());
-			m.setValue(value);
-			return m;
-		}
-		}}
-		catch(InputException e) {
-			JOptionPane.showMessageDialog(null, e.toString());
 		}
 		return null;
 	}
 	
 	public void modifyFilter(String[] filter) {
-		
+		FilterFinder(filter[0], filter[1], filter[2]);
 		Name.setSelectedItem(filter[0]);
 		Type.setSelectedItem(filter[1]);
 		value.setText(filter[2]);

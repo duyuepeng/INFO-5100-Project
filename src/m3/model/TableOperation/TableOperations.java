@@ -1,4 +1,4 @@
-package m3.model.DataBaseOperation;
+package m3.model.TableOperation;
 
 import java.sql.*;
 import java.util.Date;
@@ -68,10 +68,10 @@ public class TableOperations {
         Date endDate = DateToSqlDatetime.JavaEndDateToSqlDate(I);
 
         String sql = new StringBuilder().append("if not exists (select * from sysobjects where name='").append(I.getDealerID()).append("' and xtype='U')").
-                append("create table ").append(I.getDealerID()).append(" (").append("IncentiveID int identity(1,1) primary key,").append("startDate DATETIME,").append("endDate DATETIME,").
-                append("Title VARCHAR(max),").append("Disclaimer VARCHAR(max),").append("DealerID VARCHAR(max),").append("FilterList VARCHAR(max),").append("Offer VARCHAR(max) )").append("INSERT INTO ").append(I.getDealerID()).
-                append(" (startDate,endDate,Title,Disclaimer,DealerID,FilterList,Offer) ").append("VALUES ('").
-                append(startDate).append("','").append(endDate).append("','").append(I.getTitle()).append("','").append(I.getDisclaimer()).append("','").append(I.getDealerID()).
+                append("create table ").append(I.getDealerID()).append(" (").append("IncentiveID VARCHAR(225) primary key,").append("startDate DATETIME,").append("endDate DATETIME,").
+                append("Title VARCHAR(max),").append("Disclaimer VARCHAR(max),").append("DealerID VARCHAR(max),").append("FilterList VARCHAR(max),").append("Offer VARCHAR(max) )").append("INSERT INTO").append(I.getDealerID()).
+                append(" (IncentiveID,startDate,endDate,Title,Disclaimer,DealerID,FilterList,Offer) ").append("VALUES ('").
+                append(I.getIncentiveID()).append("','").append(startDate).append("','").append(endDate).append("','").append(I.getTitle()).append("','").append(I.getDisclaimer()).append("','").append(I.getDealerID()).
                 append("','").append(filterList).append("','").append(offer).append("')").toString();
 
         Statement statement = connection.createStatement();
@@ -115,10 +115,10 @@ public class TableOperations {
     //delete a item
     /*
 
-        DELETE FROM [DealerID] WHERE IncentiveID = '[I.IncentiveID]';
+        DELETE FROM [DealerID] WHERE IncentiveID = [I.IncentiveID];
 
     * */
-    public void DeleteItem(Incentive I) throws SQLException{
+    public static void DeleteItem(Incentive I) throws SQLException{
         CreateConnection();
         String sql = new StringBuilder().append("DELETE FROM  ").append(I.getDealerID()).append(" WHERE IncentiveID = '"+I.getIncentiveID()+"';").toString();
         Statement statement = connection.createStatement();

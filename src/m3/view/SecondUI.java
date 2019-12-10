@@ -5,9 +5,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Set;
 
 import javax.imageio.spi.ServiceRegistry.Filter;
 import javax.swing.JButton;
@@ -23,7 +21,6 @@ import javax.swing.table.DefaultTableModel;
 
 import com.toedter.calendar.JDateChooser;
 
-import dataproto.Dealer;
 import m3.model.Incentive;
 import m3.model.IncentiveList;
 import m3.model.filter.BrandFilter;
@@ -31,10 +28,8 @@ import m3.model.filter.ColorFilter;
 import m3.model.filter.YearFilter;
 import m3.model.offer.CashBackOffer;
 import m3.model.offer.DiscountOffer;
-import m3.model.offer.Offer;
-import m3.model.filter.*;
 
-public class IncentiveDetailUI {
+public class SecondUI {
 	
 	JFrame frame;
 	JTable table = new JTable();
@@ -43,23 +38,20 @@ public class IncentiveDetailUI {
 	JComboBox offerChoice;
 	JButton cancel,create,edit,delete,ok;
 	JDateChooser startDateChooser,endDateChooser;
-	IncentiveListUI fui;
+	FirstUI fui;
 
 	int rowIndex;
 	JLabel offerLabel;
-	
-	FilterDetailUI filterUI;
-	private Dealer dealer;
-	private Incentive iw;
+
+	FilterEditUI filterUI;
 
 	private String[] row;
 
 
 
-	IncentiveDetailUI(IncentiveListUI fui, int rowIndex, Dealer dealer){
+	SecondUI(FirstUI fui, int rowIndex){
 		this.fui = fui;
 		this.rowIndex = rowIndex;
-		this.dealer = dealer;
 	}
 	
 	//public SecondUI(FirstUI firstUI, String title, String string2, String string3, String disclaimer) {
@@ -67,17 +59,14 @@ public class IncentiveDetailUI {
 	//}
 
 	public void start(){
-		 iw = new Incentive();
         frame = new JFrame();
         frame.setSize(450, 600);
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel panel = new JPanel();
         frame.add(panel);
         placeComponent(panel);
-        addListeners();
-       
+        //addListeners();
         frame.setVisible(true);
-        
     }
 
 
@@ -128,15 +117,13 @@ public class IncentiveDetailUI {
         offerChoice.addItem("Discount");
         offerChoice.addItem("Cashback");
         panel.add(offerChoice);
-        
         offerText = new JTextField();
         offerText.setBounds(285, 235, 115, 25);
-        
         panel.add(offerText);
         offerLabel = new JLabel();
         offerLabel.setBounds(150,255,300,25);
         panel.add(offerLabel);
-       
+        
         JLabel conditions = new JLabel("Conditions");
         conditions.setBounds(50, 295, 200, 25);
         panel.add(conditions);
@@ -160,7 +147,7 @@ public class IncentiveDetailUI {
         ok = new JButton("OK");
         ok.setBounds(240, 520, 120, 25);
         panel.add(ok);
-        
+
 
         
     }
@@ -168,16 +155,21 @@ public class IncentiveDetailUI {
 	private void addListeners() {
 		create.addActionListener(e -> {
 		openFilterEditUI();
-		filterUI.addWindowStateListener(l -> {addToTableBelow(filterUI.toSecondUIFilter());
-		//filterList.add(filterUI.toSecondUIFilter());
-		});
-		});
+		filterUI.addWindowStateListener(l -> {addToTableBelow(filterUI.toSecondUIFilter());});
+
+       // filterUI.dispose();
+		
+
+
+		//addToTableBelow(filterUI.toSecondUIFilter())
+
+		}
+				);
 		
 		  // Third UI start function here
         
 		
     	edit.addActionListener(e -> {
-    		
     		row = getRow();
     		openFilterEditUI();  		
     		filterUI.modifyFilter(row);
@@ -191,8 +183,8 @@ public class IncentiveDetailUI {
         
     	delete.addActionListener(e -> deleteSelectedRow());
  
-    	//cancel.addActionListener(e -> frame.dispose());
-    	//cancel.addActionListener(e -> System.exit(0));
+    	cancel.addActionListener(e -> frame.dispose());
+    	cancel.addActionListener(e -> System.exit(0));
 
     	
     	cancel.addActionListener(e -> {
@@ -248,13 +240,11 @@ public class IncentiveDetailUI {
 			); 
     	
     	ok.addActionListener(e -> {
-    		
+    		Incentive iw = new Incentive();
     		iw.setTitle(titleText.getText());
     		iw.setStartDate(startDateChooser.getDate());
     		iw.setEndDate(endDateChooser.getDate());
     		iw.setDisclaimer(disclaimerText.getText());
-    		iw.setDealerID(dealer.getId());
-    		
     		String st = offerChoice.getSelectedItem().toString();
     		if(st.equals("Discount")){
     			iw.setOffer(new DiscountOffer(Double.parseDouble(offerText.getText())));
@@ -277,19 +267,12 @@ public class IncentiveDetailUI {
         
     }
 	
-	private void refreshFilterTable() {
-		
-	}
-	
 
-	
-	public void addFiltertoIncentive(m3.model.filter.Filter f) {
-		iw.addFilter(f);
-	}
+
 	
 	
 	private void openFilterEditUI() {
-		filterUI = new FilterDetailUI(this);
+		filterUI = new FilterEditUI(this);
 	}
     
     private void createTable(){
@@ -300,14 +283,11 @@ public class IncentiveDetailUI {
 		dm.addColumn("Value");       
 	}
     
-    
-    
     private void deleteSelectedRow(){
     	dm = (DefaultTableModel) table.getModel();
 		try{
 			int rowIndex = table.getSelectedRow();
 			dm.removeRow(rowIndex);
-			
 		}catch(Exception e){
 			JOptionPane.showMessageDialog(null, "Please select a Row or No rows to delete");
 		}
@@ -317,7 +297,7 @@ public class IncentiveDetailUI {
     	dm = (DefaultTableModel) table.getModel();
 		try{
 			int rowIndex = table.getSelectedRow();
-			//dm.removeRow(rowIndex);
+			dm.removeRow(rowIndex);
 			row = new String[] {(String) dm.getValueAt(rowIndex, 0),(String)dm.getValueAt(rowIndex, 1),(String)dm.getValueAt(rowIndex, 2)};
 			
 		}catch(Exception e){
@@ -328,7 +308,6 @@ public class IncentiveDetailUI {
     
     public void addToTableBelow(m3.model.filter.Filter filter) {
 		dm.addRow(filterToString(filter));
-		addFiltertoIncentive(filter);
 
 	}
     
@@ -344,12 +323,7 @@ public class IncentiveDetailUI {
 		case("YearFilter"):{
 			return new String[] {"Year",((YearFilter)filter).checkerToString(), ((YearFilter)filter).getValue().toString()};
 		}
-		case("VehicleIDsFilter"):{
-			return new String[] {"VehicleIDs",((VehicleIDsFilter)filter).checkerToString(),((VehicleIDsFilter)filter).getStringfromList()};
-		}
-		case("ModelFilter"):{
-			return new String[] {"Model", ((ModelFilter)filter).checkerToString(),((ModelFilter)filter).getValue()};
-		}
+
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + filter.getClass());
 		}

@@ -1,4 +1,4 @@
-package m3.model.DataBaseOperation;
+package m3.model.TableOperation;
 
 import m3.model.Incentive;
 
